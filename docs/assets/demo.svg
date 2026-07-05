@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 470" font-family="'SFMono-Regular', ui-monospace, Menlo, Consolas, monospace" font-size="15">
+  <style>
+    .win { fill: #0d1117; }
+    .bar { fill: #161b22; }
+    .txt { fill: #e6edf3; }
+    .dim { fill: #8b949e; }
+    .grn { fill: #3fb950; }
+    .cyn { fill: #39c5cf; }
+    .hdr { fill: #e6edf3; font-weight: 700; }
+    g.blk { opacity: 1; }
+    .b0 { animation: b0 17s infinite; }
+    .b1 { animation: b1 17s infinite; }
+    .b2 { animation: b2 17s infinite; }
+    .b3 { animation: b3 17s infinite; }
+    @keyframes b0 { 0%,1%{opacity:0} 4%,94%{opacity:1} 98%,100%{opacity:0} }
+    @keyframes b1 { 0%,22%{opacity:0} 25%,94%{opacity:1} 98%,100%{opacity:0} }
+    @keyframes b2 { 0%,44%{opacity:0} 47%,94%{opacity:1} 98%,100%{opacity:0} }
+    @keyframes b3 { 0%,66%{opacity:0} 69%,94%{opacity:1} 98%,100%{opacity:0} }
+    .cur { animation: blink 1s steps(1) infinite; }
+    @keyframes blink { 50%{opacity:0} }
+  </style>
+
+  <rect class="win" x="0" y="0" width="820" height="470" rx="10"/>
+  <rect class="bar" x="0" y="0" width="820" height="34" rx="10"/>
+  <rect class="bar" x="0" y="20" width="820" height="14"/>
+  <circle cx="20" cy="17" r="6" fill="#ff5f56"/>
+  <circle cx="40" cy="17" r="6" fill="#ffbd2e"/>
+  <circle cx="60" cy="17" r="6" fill="#27c93f"/>
+  <text x="410" y="22" text-anchor="middle" class="dim" font-size="13">devbr-cli — APIs públicas brasileiras no terminal</text>
+
+  <!-- feriados -->
+  <g class="blk b0">
+    <text x="24" y="66"><tspan class="grn">$</tspan><tspan class="txt" dx="8">devbr feriados 2026</tspan></text>
+    <text x="24" y="88" class="hdr">Data        Nome                      Tipo</text>
+    <text x="24" y="110" class="txt">01/01/2026  Confraternização mundial  national</text>
+    <text x="24" y="132" class="txt">17/02/2026  Carnaval                  national</text>
+  </g>
+
+  <!-- cotacao -->
+  <g class="blk b1">
+    <text x="24" y="176"><tspan class="grn">$</tspan><tspan class="txt" dx="8">devbr cotacao</tspan></text>
+    <text x="24" y="198" class="txt">USD → BRL  R$ 5,17  R$ 5,17  <tspan class="dim">FECHAMENTO PTAX</tspan></text>
+    <text x="24" y="220" class="txt">EUR → BRL  R$ 5,91  R$ 5,92  <tspan class="dim">FECHAMENTO PTAX</tspan></text>
+  </g>
+
+  <!-- cep -->
+  <g class="blk b2">
+    <text x="24" y="264"><tspan class="grn">$</tspan><tspan class="txt" dx="8">devbr cep 01001-000</tspan></text>
+    <text x="24" y="286"><tspan class="cyn">CEP</tspan><tspan class="txt" dx="26">01001000</tspan></text>
+    <text x="24" y="308"><tspan class="cyn">Cidade</tspan><tspan class="txt" dx="8">São Paulo · SP</tspan></text>
+    <text x="24" y="330"><tspan class="cyn">Logradouro</tspan><tspan class="txt" dx="8">Praça da Sé</tspan></text>
+  </g>
+
+  <!-- ibge + json -->
+  <g class="blk b3">
+    <text x="24" y="374"><tspan class="grn">$</tspan><tspan class="txt" dx="8">devbr ibge municipios sp --json | jq '.[].nome'</tspan></text>
+    <text x="24" y="396" class="txt">"Adamantina"</text>
+    <text x="24" y="418" class="txt">"Adolfo"</text>
+    <text x="24" y="440"><tspan class="dim">"Aguaí"</tspan><tspan class="grn cur" dx="12">▋</tspan></text>
+  </g>
+</svg>
