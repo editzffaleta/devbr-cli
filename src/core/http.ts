@@ -8,6 +8,8 @@ import { NetworkError, NotFoundError } from './errors.js';
 
 const USER_AGENT = 'devbr-cli (+https://github.com/editzffaleta/devbr-cli)';
 const DEFAULT_TIMEOUT_MS = 10_000;
+// Status transitórios que valem uma única nova tentativa.
+const RETRY_STATUSES = new Set([429, 503]);
 
 let cacheEnabled = true;
 
@@ -23,9 +25,46 @@ export interface FetchOptions {
   cacheTtlMs?: number;
 }
 
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/** Imprime a causa original no stderr quando `DEBUG` inclui "devbr". */
+function debugLog(err: unknown): void {
+  if ((process.env.DEBUG ?? '').includes('devbr')) {
+    const cause = err instanceof Error && err.cause !== undefined ? err.cause : err;
+    process.stderr.write(`[devbr] ${String(cause)}\n`);
+  }
+}
+
+/** Faz uma única requisição; falhas sem resposta (rede/timeout) viram NetworkError sem `status`. */
+async function requestOnce(url: string, timeoutMs: number): Promise<Response> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, {
+      headers: { 'User-Agent': USER_AGENT, Accept: 'application/json' },
+      signal: controller.signal,
+    });
+  } catch (err) {
+    debugLog(err);
+    if (err instanceof Error && err.name === 'AbortError') {
+      throw new NetworkError(`Tempo esgotado ao consultar a API (limite de ${timeoutMs}ms).`, {
+        cause: err,
+      });
+    }
+    throw new NetworkError('Falha de rede ao consultar a API. Verifique sua conexão.', {
+      cause: err,
+    });
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 /**
  * Busca JSON de `url`. Retorna o corpo tipado como `T`. Lança `NotFoundError`
- * em 404, `NetworkError` em timeout/falha de rede ou status >= 400.
+ * em 404 e `NetworkError` em timeout/falha de rede, status >= 400 ou corpo não-JSON.
+ * Faz uma única nova tentativa em 429/503.
  */
 export async function fetchJson<T>(url: string, opts: FetchOptions = {}): Promise<T> {
   const { timeoutMs = DEFAULT_TIMEOUT_MS, cacheTtlMs } = opts;
@@ -35,32 +74,31 @@ export async function fetchJson<T>(url: string, opts: FetchOptions = {}): Promis
     if (cached !== undefined) return cached;
   }
 
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
-
-  let response: Response;
-  try {
-    response = await fetch(url, {
-      headers: { 'User-Agent': USER_AGENT, Accept: 'application/json' },
-      signal: controller.signal,
-    });
-  } catch (err) {
-    if (err instanceof Error && err.name === 'AbortError') {
-      throw new NetworkError(`Tempo esgotado ao consultar a API (limite de ${timeoutMs}ms).`);
-    }
-    throw new NetworkError('Falha de rede ao consultar a API. Verifique sua conexão.');
-  } finally {
-    clearTimeout(timer);
+  let response = await requestOnce(url, timeoutMs);
+  if (RETRY_STATUSES.has(response.status)) {
+    await sleep(500 + Math.floor(Math.random() * 500));
+    response = await requestOnce(url, timeoutMs);
   }
 
   if (response.status === 404) {
     throw new NotFoundError('Recurso não encontrado na API.');
   }
   if (!response.ok) {
-    throw new NetworkError(`A API respondeu com erro (HTTP ${response.status}).`);
+    throw new NetworkError(`A API respondeu com erro (HTTP ${response.status}).`, {
+      status: response.status,
+    });
   }
 
-  const data = (await response.json()) as T;
+  let data: T;
+  try {
+    data = (await response.json()) as T;
+  } catch (err) {
+    debugLog(err);
+    throw new NetworkError(
+      'A API retornou uma resposta inválida (não-JSON). Tente novamente mais tarde.',
+      { cause: err },
+    );
+  }
 
   if (cacheEnabled && cacheTtlMs) {
     await cache.set(url, data, cacheTtlMs);
