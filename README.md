@@ -36,6 +36,9 @@ npx devbr-cli bancos 341
 | `devbr ibge estados` · `ibge municipios <uf>` | Estados e municípios do IBGE |
 | `devbr bancos [codigo]` | Lista bancos ou detalha um pelo código |
 
+📖 Referência completa de cada comando (argumentos, exemplos e saída JSON) em
+**[`docs/comandos.md`](docs/comandos.md)**.
+
 Todos os comandos aceitam as flags globais:
 
 - **`--json`** — emite JSON puro em stdout (para compor com `jq` e scripts).
@@ -84,6 +87,8 @@ npm run typecheck && npm run lint && npm test
 npm run build                  # gera dist/cli.js
 node dist/cli.js cotacao
 ```
+
+Detalhes e como adicionar um comando: **[`CONTRIBUTING.md`](CONTRIBUTING.md)**.
 
 ## Licença
 
