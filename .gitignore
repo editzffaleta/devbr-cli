@@ -1,0 +1,17 @@
+# dependências
+node_modules/
+
+# build
+dist/
+
+# ambiente / segredos
+.env
+.env.*
+!.env.example
+
+# logs e caches
+*.log
+npm-debug.log*
+.DS_Store
+.vitest/
+coverage/

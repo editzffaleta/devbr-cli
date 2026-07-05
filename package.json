@@ -1,0 +1,66 @@
+{
+  "name": "devbr-cli",
+  "version": "0.2.0",
+  "description": "CLI para desenvolvedores brasileiros: feriados, cotação, CEP, CNPJ, DDD, FIPE, IBGE e bancos direto do terminal.",
+  "keywords": [
+    "cli",
+    "brasil",
+    "brasilapi",
+    "feriados",
+    "cep",
+    "cnpj",
+    "ddd",
+    "fipe",
+    "ibge",
+    "bancos",
+    "cotacao",
+    "terminal"
+  ],
+  "type": "module",
+  "bin": {
+    "devbr": "dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT",
+  "author": "Bruno Faleta <brunofaleta0@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/editzffaleta/devbr-cli.git"
+  },
+  "homepage": "https://github.com/editzffaleta/devbr-cli#readme",
+  "bugs": {
+    "url": "https://github.com/editzffaleta/devbr-cli/issues"
+  },
+  "scripts": {
+    "dev": "tsx src/cli.ts",
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "test": "vitest run",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "commander": "^12.1.0",
+    "ora": "^8.1.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.9.0",
+    "@types/node": "^20.14.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^9.9.0",
+    "globals": "^15.9.0",
+    "prettier": "^3.3.0",
+    "tsup": "^8.2.0",
+    "tsx": "^4.17.0",
+    "typescript": "^5.5.0",
+    "vitest": "^4.0.0"
+  }
+}
