@@ -35,6 +35,10 @@ describe('validação de entrada dos comandos', () => {
     await expect(run(['cnpj', '123'])).rejects.toBeInstanceOf(ValidationError);
   });
 
+  it('cnpj rejeita dígito verificador inválido, sem tocar a rede (M2)', async () => {
+    await expect(run(['cnpj', '11222333000182'])).rejects.toBeInstanceOf(ValidationError);
+  });
+
   it('bancos rejeita código não numérico', async () => {
     await expect(run(['bancos', 'abc'])).rejects.toBeInstanceOf(ValidationError);
   });
