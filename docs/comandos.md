@@ -13,7 +13,9 @@ Documentação completa dos comandos do `devbr-cli`. Todos os dados vêm de APIs
 - [`fipe`](#fipe)
 - [`ibge`](#ibge)
 - [`bancos`](#bancos)
+- [`cache`](#cache)
 - [Códigos de saída](#códigos-de-saída)
+- [Diagnóstico](#diagnóstico)
 
 ## Flags globais
 
@@ -268,6 +270,32 @@ Código  Instituição            ISPB
 
 ---
 
+## `cache`
+
+Gerencia o cache local (respostas guardadas em `~/.cache/devbr-cli`).
+
+```
+devbr cache info
+devbr cache clear
+```
+
+- **`cache info`** — mostra o caminho, a quantidade de arquivos e o tamanho total.
+- **`cache clear`** — apaga todo o cache e informa quantos arquivos foram removidos.
+
+```console
+$ devbr cache info
+Diretório  /home/voce/.cache/devbr-cli
+Arquivos   4
+Tamanho    2.3 KB
+
+$ devbr cache clear
+Cache limpo: 4 arquivo(s) removido(s).
+```
+
+Entradas expiradas também são removidas automaticamente na primeira vez que são lidas.
+
+---
+
 ## Códigos de saída
 
 | Código | Significado |
@@ -277,3 +305,12 @@ Código  Instituição            ISPB
 | `2` | Entrada inválida (validação de argumento). |
 
 Em modo `--json`, erros são emitidos como `{ "erro": "..." }` em `stderr`, preservando o código de saída.
+
+## Diagnóstico
+
+Defina `DEBUG=devbr` para imprimir no `stderr` a causa original de falhas de rede (útil para
+distinguir timeout, DNS, conexão recusada, etc.):
+
+```bash
+DEBUG=devbr devbr cep 01001-000
+```

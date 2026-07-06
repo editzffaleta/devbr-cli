@@ -2,6 +2,32 @@
 
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/), em português.
 
+## [0.3.0] — 2026-07-05
+
+### Adicionado
+- Comando `cache` com `info` (caminho, quantidade e tamanho) e `clear` (limpa o cache).
+- Validação do dígito verificador do CNPJ: um CNPJ com DV errado é rejeitado sem tocar a rede.
+- Validação da faixa de ano em `feriados` (1900–2199).
+- Uma nova tentativa automática em respostas `429`/`503` (com espera curta e jitter).
+- Variável `DEBUG=devbr` para imprimir a causa original de falhas de rede no `stderr`.
+
+### Corrigido
+- Resposta não-JSON da API (ex.: página de erro HTML de CDN) agora vira uma mensagem clara em
+  português, em vez de um erro cru em inglês.
+- `cotacao` aborta imediatamente em falha de rede/timeout, em vez de tentar vários dias e travar.
+- `cotacao` calcula a data-base no fuso de São Paulo (antes usava UTC).
+- `fipe` só troca a mensagem por "indisponível na origem" em erros `5xx`; falha de rede/timeout
+  mostra a mensagem real.
+- Erros de uso (argumento faltando, comando/opção desconhecidos) saem em português, com código de
+  saída 2 e no formato `{ "erro": ... }` quando `--json`.
+
+### Melhorado
+- Cache: entradas expiradas são removidas ao serem lidas; escrita atômica e permissões restritas
+  (diretório `0700`, arquivos `0600`).
+- Erros de rede preservam a causa original (`cause`) para diagnóstico.
+- Integração contínua passa a rodar também em macOS e Windows.
+- Cobertura de testes ampliada (caminho feliz de cada comando, retry, cache corrompido).
+
 ## [0.2.0] — 2026-07-05
 
 ### Adicionado

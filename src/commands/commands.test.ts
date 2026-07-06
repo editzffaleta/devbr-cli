@@ -15,6 +15,11 @@ describe('validação de entrada dos comandos', () => {
     await expect(run(['feriados', 'abc'])).rejects.toBeInstanceOf(ValidationError);
   });
 
+  it('feriados rejeita ano fora do intervalo 1900–2199 (B7)', async () => {
+    await expect(run(['feriados', '1800'])).rejects.toBeInstanceOf(ValidationError);
+    await expect(run(['feriados', '3000'])).rejects.toBeInstanceOf(ValidationError);
+  });
+
   it('cep rejeita CEP com menos de 8 dígitos', async () => {
     await expect(run(['cep', '123'])).rejects.toBeInstanceOf(ValidationError);
   });
@@ -33,6 +38,10 @@ describe('validação de entrada dos comandos', () => {
 
   it('cnpj rejeita CNPJ com menos de 14 dígitos', async () => {
     await expect(run(['cnpj', '123'])).rejects.toBeInstanceOf(ValidationError);
+  });
+
+  it('cnpj rejeita dígito verificador inválido, sem tocar a rede (M2)', async () => {
+    await expect(run(['cnpj', '11222333000182'])).rejects.toBeInstanceOf(ValidationError);
   });
 
   it('bancos rejeita código não numérico', async () => {

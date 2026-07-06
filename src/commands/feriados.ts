@@ -25,6 +25,10 @@ export function registerFeriados(program: Command): void {
       if (!/^\d{4}$/.test(year)) {
         throw new ValidationError(`Ano inválido: "${year}". Informe um ano com 4 dígitos, ex.: 2026.`);
       }
+      const yearNum = Number(year);
+      if (yearNum < 1900 || yearNum > 2199) {
+        throw new ValidationError(`Ano fora do intervalo suportado (1900–2199): ${year}.`);
+      }
 
       const url = `https://brasilapi.com.br/api/feriados/v1/${year}`;
       const feriados = await withSpinner(`Consultando feriados de ${year}…`, () =>

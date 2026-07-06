@@ -20,11 +20,21 @@ export class NotFoundError extends CliError {
   }
 }
 
-/** Falha de rede, timeout ou resposta de erro da API. */
+/**
+ * Falha de rede, timeout ou resposta de erro da API.
+ *
+ * - `status` guarda o código HTTP quando o erro veio de uma resposta (>= 400);
+ *   fica `undefined` para falhas sem resposta (rede/timeout).
+ * - `cause` preserva o erro original para diagnóstico (visível com `DEBUG=devbr`).
+ */
 export class NetworkError extends CliError {
-  constructor(message: string) {
+  readonly status?: number;
+
+  constructor(message: string, options: { cause?: unknown; status?: number } = {}) {
     super(message, 1);
     this.name = 'NetworkError';
+    this.status = options.status;
+    if (options.cause !== undefined) this.cause = options.cause;
   }
 }
 

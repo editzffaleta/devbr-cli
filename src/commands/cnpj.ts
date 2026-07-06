@@ -1,4 +1,5 @@
 import type { Command } from 'commander';
+import { isValidCnpj } from '../core/cnpj.js';
 import { ValidationError } from '../core/errors.js';
 import { formatIsoDate, onlyDigits } from '../core/format.js';
 import { fetchJson } from '../core/http.js';
@@ -33,6 +34,9 @@ export function registerCnpj(program: Command): void {
       const cnpj = onlyDigits(cnpjArg);
       if (cnpj.length !== 14) {
         throw new ValidationError(`CNPJ inválido: "${cnpjArg}". Informe 14 dígitos.`);
+      }
+      if (!isValidCnpj(cnpj)) {
+        throw new ValidationError('CNPJ inválido — dígito verificador não confere.');
       }
 
       const url = `https://brasilapi.com.br/api/cnpj/v1/${cnpj}`;

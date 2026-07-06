@@ -9,16 +9,17 @@ const TIPOS = ['carros', 'motos', 'caminhoes'] as const;
 
 /**
  * O serviço FIPE por trás da BrasilAPI fica indisponível na origem de tempos em
- * tempos (respondendo erro upstream). Traduzimos isso numa mensagem clara em vez
- * do genérico "HTTP 500".
+ * tempos, respondendo erro upstream (>= 500). Só nesse caso trocamos a mensagem
+ * genérica por uma explicação clara; falhas de rede/timeout mantêm a mensagem real.
  */
 async function fetchFipe<T>(url: string, opts: FetchOptions): Promise<T> {
   try {
     return await fetchJson<T>(url, opts);
   } catch (err) {
-    if (err instanceof NetworkError) {
+    if (err instanceof NetworkError && err.status !== undefined && err.status >= 500) {
       throw new NetworkError(
         'A tabela FIPE está temporariamente indisponível na origem (BrasilAPI). Tente novamente mais tarde.',
+        { status: err.status },
       );
     }
     throw err;

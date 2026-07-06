@@ -1,6 +1,6 @@
 {
   "name": "devbr-cli",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "CLI para desenvolvedores brasileiros: feriados, cotação, CEP, CNPJ, DDD, FIPE, IBGE e bancos direto do terminal.",
   "keywords": [
     "cli",

@@ -30,10 +30,19 @@ interface CotacaoMoeda {
   atualizado: string;
 }
 
+const FUSO_SP = new Intl.DateTimeFormat('en-CA', {
+  timeZone: 'America/Sao_Paulo',
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+});
+
+/** Data (AAAA-MM-DD) de `days` dias atrás, ancorada no fuso America/Sao_Paulo. */
 function isoDaysAgo(days: number): string {
-  const d = new Date();
-  d.setDate(d.getDate() - days);
-  return d.toISOString().slice(0, 10);
+  const [ano, mes, dia] = FUSO_SP.format(new Date()).split('-').map(Number);
+  const base = new Date(Date.UTC(ano!, mes! - 1, dia!));
+  base.setUTCDate(base.getUTCDate() - days);
+  return base.toISOString().slice(0, 10);
 }
 
 function urlFor(moeda: string, data: string): string {
@@ -58,8 +67,11 @@ async function coletar(moedas: string[]): Promise<{ data: string; itens: Cotacao
         dataResolvida = data;
         primeira = resp;
       }
-    } catch {
-      // dia sem pregão (400) ou indisponível — tenta o dia anterior
+    } catch (err) {
+      // Falha de rede/timeout (NetworkError sem status HTTP) não adianta repetir
+      // por vários dias — aborta já com a mensagem real. Dia sem pregão (HTTP 400)
+      // ou 404 têm status e apenas fazem o loop tentar o dia anterior.
+      if (err instanceof NetworkError && err.status === undefined) throw err;
     }
   }
 
