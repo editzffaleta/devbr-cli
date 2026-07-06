@@ -15,6 +15,11 @@ describe('validação de entrada dos comandos', () => {
     await expect(run(['feriados', 'abc'])).rejects.toBeInstanceOf(ValidationError);
   });
 
+  it('feriados rejeita ano fora do intervalo 1900–2199 (B7)', async () => {
+    await expect(run(['feriados', '1800'])).rejects.toBeInstanceOf(ValidationError);
+    await expect(run(['feriados', '3000'])).rejects.toBeInstanceOf(ValidationError);
+  });
+
   it('cep rejeita CEP com menos de 8 dígitos', async () => {
     await expect(run(['cep', '123'])).rejects.toBeInstanceOf(ValidationError);
   });
