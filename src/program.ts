@@ -3,6 +3,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Command } from 'commander';
 import { registerBancos } from './commands/bancos.js';
+import { registerCache } from './commands/cache.js';
 import { registerCep } from './commands/cep.js';
 import { registerCnpj } from './commands/cnpj.js';
 import { registerCotacao } from './commands/cotacao.js';
@@ -41,6 +42,7 @@ export function buildProgram(): Command {
   registerFipe(program);
   registerIbge(program);
   registerBancos(program);
+  registerCache(program);
 
   return program;
 }
